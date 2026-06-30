@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Token Meter</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="tmp-header">
+    <svg class="tmp-logo" viewBox="0 0 28 28">
+      <circle cx="14" cy="14" r="11" class="tmp-logo-track"></circle>
+      <circle cx="14" cy="14" r="11" class="tmp-logo-fill"></circle>
+    </svg>
+    <div>
+      <h1>Token Meter</h1>
+      <p class="tmp-sub">Live counter for ChatGPT, Claude &amp; Gemini</p>
+    </div>
+  </div>
+
+  <section class="tmp-section">
+    <label class="tmp-label" for="api-key">Anthropic API key</label>
+    <p class="tmp-hint">
+      Only needed for the optional "Rewrite with AI" button. Stored locally on
+      this device — never sent anywhere except directly to Anthropic's API.
+    </p>
+    <input type="password" id="api-key" class="tmp-input" placeholder="sk-ant-…" autocomplete="off" />
+    <div class="tmp-row">
+      <button id="save-key" class="tmp-btn-primary">Save</button>
+      <button id="clear-key" class="tmp-btn-ghost">Clear</button>
+    </div>
+    <p id="save-status" class="tmp-status"></p>
+  </section>
+
+  <section class="tmp-section">
+    <h2 class="tmp-section-title">How counting works</h2>
+    <ul class="tmp-list">
+      <li><strong>ChatGPT</strong> — exact count (loaded only once you click into the chat box)</li>
+      <li><strong>Claude</strong> — close estimate (Anthropic doesn't publish its tokenizer)</li>
+      <li><strong>Gemini</strong> — close estimate (Google doesn't publish its tokenizer)</li>
+    </ul>
+  </section>
+
+  <footer class="tmp-footer">v0.1.0 · trimming is free, rewriting uses your own API key</footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+/* Token Meter badge — injected into chatgpt.com / claude.ai / gemini.google.com.
+   Design: a small ring gauge that sits near the composer. The ring fills as
+   token count approaches a configurable limit; the number sits at its center.
+   Color and type choices are deliberate (see design rationale in conversation):
+   dark slate base, warm off-white text, single amber accent shifting to muted
+   red near/over limit. Monospace for the count itself — it's data, not prose. */
+
+:root {
+  --tm-bg: #1c1f26;
+  --tm-bg-elevated: #242831;
+  --tm-text: #ededea;
+  --tm-text-dim: #9a9fa8;
+  --tm-accent: #e8a33d;
+  --tm-accent-danger: #c25450;
+  --tm-ring-track: #343a46;
+  --tm-radius: 10px;
+  --tm-mono: "JetBrains Mono", "SF Mono", "Roboto Mono", ui-monospace, monospace;
+  --tm-sans: -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.tm-badge-root {
+  position: fixed;
+  z-index: 2147483000; /* stay above host page UI without competing with native modals */
+  bottom: 96px;
+  right: 24px;
+  font-family: var(--tm-sans);
+  user-select: none;
+}
+
+.tm-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tm-bg);
+  border: 1px solid var(--tm-ring-track);
+  border-radius: 999px;
+  padding: 6px 12px 6px 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.tm-pill:hover {
+  border-color: var(--tm-accent);
+}
+
+.tm-pill:active {
+  transform: scale(0.97);
+}
+
+.tm-ring-svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.tm-ring-track {
+  fill: none;
+  stroke: var(--tm-ring-track);
+  stroke-width: 3;
+}
+
+.tm-ring-fill {
+  fill: none;
+  stroke: var(--tm-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.2s ease, stroke 0.2s ease;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.tm-ring-fill.tm-danger {
+  stroke: var(--tm-accent-danger);
+}
+
+.tm-count {
+  font-family: var(--tm-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tm-text);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.tm-count .tm-approx {
+  color: var(--tm-text-dim);
+  font-weight: 400;
+}
+
+.tm-pill-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.tm-messages-left {
+  font-family: var(--tm-sans);
+  font-size: 10px;
+  color: var(--tm-text-dim);
+  white-space: nowrap;
+}
+
+.tm-messages-left.tm-danger-text {
+  color: var(--tm-accent-danger);
+}
+
+.tm-panel {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: var(--tm-bg-elevated);
+  border: 1px solid var(--tm-ring-track);
+  border-radius: var(--tm-radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  padding: 14px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tm-panel.tm-open {
+  display: flex;
+}
+
+.tm-panel-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  color: var(--tm-text-dim);
+}
+
+.tm-panel-row strong {
+  font-family: var(--tm-mono);
+  color: var(--tm-text);
+  font-size: 13px;
+}
+
+.tm-divider {
+  height: 1px;
+  background: var(--tm-ring-track);
+  margin: 2px 0;
+}
+
+.tm-refresh-btn {
+  background: transparent;
+  color: var(--tm-text-dim);
+  border: none;
+  font-size: 11px;
+  font-family: var(--tm-sans);
+  cursor: pointer;
+  padding: 2px 0;
+  text-align: left;
+  transition: color 0.15s ease;
+}
+
+.tm-refresh-btn:hover {
+  color: var(--tm-accent);
+}
+
+.tm-refresh-btn:disabled {
+  color: var(--tm-text-dim);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tm-optimize-btn {
+  background: var(--tm-accent);
+  color: #1c1611;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--tm-sans);
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.tm-optimize-btn:hover {
+  filter: brightness(1.08);
+}
+
+.tm-optimize-btn:disabled {
+  background: var(--tm-ring-track);
+  color: var(--tm-text-dim);
+  cursor: default;
+}
+
+.tm-optimize-summary {
+  font-size: 11.5px;
+  color: var(--tm-text-dim);
+  line-height: 1.5;
+}
+
+.tm-optimize-summary ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+
+.tm-llm-btn {
+  background: transparent;
+  color: var(--tm-text-dim);
+  border: 1px solid var(--tm-ring-track);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-family: var(--tm-sans);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.tm-llm-btn:hover {
+  border-color: var(--tm-accent);
+  color: var(--tm-text);
+}

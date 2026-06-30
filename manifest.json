@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Token Meter — Live Prompt Counter & Optimizer",
+  "version": "0.4.0",
+  "description": "Shows a live token count and estimated messages left while you type in ChatGPT, Claude, or Gemini, and helps you trim your prompt before you send it.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "js": ["lib/estimator.js", "lib/tokenizer-loader.js", "lib/optimizer.js", "lib/history-scraper.js", "lib/messages-left.js", "content/adapter-chatgpt.js", "content/badge.js", "content/main.js"],
+      "css": ["content/badge.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["lib/estimator.js", "lib/tokenizer-loader.js", "lib/optimizer.js", "lib/history-scraper.js", "lib/messages-left.js", "content/adapter-claude.js", "content/badge.js", "content/main.js"],
+      "css": ["content/badge.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["lib/estimator.js", "lib/tokenizer-loader.js", "lib/optimizer.js", "lib/history-scraper.js", "lib/messages-left.js", "content/adapter-gemini.js", "content/badge.js", "content/main.js"],
+      "css": ["content/badge.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/tokenizer.bundle.js"],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*"
+      ]
+    }
+  ]
+}
