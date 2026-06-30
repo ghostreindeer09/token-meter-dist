@@ -38,16 +38,16 @@ Click the badge to expand the panel. It shows:
   against the context window right now
 - **Context limit** — the assumed limit for this site (see caveat below)
 - **Tokens left** — Context limit − Used so far
-- **Messages left (≈)** — see below
+- **Messages left (≈)** — see below (ChatGPT and Gemini only — see note)
 
 The panel auto-refreshes its history scan every 4 seconds. Click **↻ Refresh
 now** for an immediate rescan instead of waiting for the next tick — useful
 right after a long reply finishes, if you want the freshest possible number
 before deciding whether to keep going in this conversation or start a new one.
 
-The badge also estimates how many more user-message/assistant-reply **pairs**
-could fit in the current conversation before hitting the context limit. It
-does this by:
+On **ChatGPT and Gemini**, the badge also estimates how many more
+user-message/assistant-reply **pairs** could fit in the current conversation
+before hitting the context limit. It does this by:
 
 1. Scraping every message currently rendered on the page (`scrapeHistory()`
    in each adapter) to compute a running average pair size — seeded from the
@@ -56,6 +56,19 @@ does this by:
 2. Subtracting (history tokens + current draft tokens) from the context
    limit to get tokens remaining.
 3. Dividing remaining tokens by the average pair size.
+
+**Not shown on Claude, intentionally.** This countdown estimates against the
+*context window* (how much fits in one conversation), which is a different
+thing from Claude's actual *usage quota* (Anthropic's rolling 5-hour message
+limit, tied to your plan and which model you're using). The context window
+(200K tokens) is rarely the binding constraint compared to the quota, so our
+number — while technically correct about what it measures — isn't the
+number people actually want to see for Claude, and showing it next to a real
+quota figure (e.g. from a dedicated tool that reads Anthropic's session data
+directly) just creates two numbers that look like they answer the same
+question but don't. Controlled by `SHOW_MESSAGES_LEFT_BY_SITE` in
+`content/main.js`. The **Used so far** / **Tokens left** rows above still
+show for Claude — only the messages-left countdown specifically is hidden.
 
 Two important caveats:
 - **Context limits vary by plan/mode and aren't exposed to the page.** ChatGPT

@@ -44,6 +44,25 @@
     Gemini: 1000000,
   };
 
+  // Whether to show the "messages left" countdown. This estimates how many
+  // more exchanges fit in the CONTEXT WINDOW — it is NOT a usage-quota
+  // countdown (Claude's 5-hour rolling message limit, ChatGPT's rate limits,
+  // etc). For ChatGPT and Gemini, the context window is the only ceiling we
+  // can reasonably reason about, so it's shown. For Claude specifically,
+  // showing it alongside a real usage-quota tool (e.g. Tally, which reads
+  // Anthropic's actual session data) produces two numbers that look like
+  // they answer the same question but don't — ours is almost always a much
+  // larger, less useful number, since the context window (200K tokens) is
+  // rarely the actual binding constraint compared to the rolling quota.
+  // Disabled here rather than trying to make our number "more accurate" —
+  // it structurally can't be, since we have no access to quota/session data
+  // and deliberately don't want to (see README's security notes).
+  const SHOW_MESSAGES_LEFT_BY_SITE = {
+    ChatGPT: true,
+    Claude: false,
+    Gemini: true,
+  };
+
   function init() {
     inputEl = adapter.findInput();
     if (!inputEl) {
@@ -200,11 +219,12 @@
     }
 
     const result = messagesLeftCalc.compute(cachedHistory, historyCounts, draftCount, limit);
+    const showMessagesLeft = SHOW_MESSAGES_LEFT_BY_SITE[adapter.siteName] !== false;
     badge.update(badgeRoot, {
       count: draftCount,
       approx,
       limit,
-      messagesLeft: result.messagesLeft,
+      messagesLeft: showMessagesLeft ? result.messagesLeft : "disabled",
       usedTokens: result.usedTokens,
       remainingTokens: result.remainingTokens,
     });

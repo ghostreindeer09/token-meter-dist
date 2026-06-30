@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Token Meter — Live Prompt Counter & Optimizer",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Shows a live token count and estimated messages left while you type in ChatGPT, Claude, or Gemini, and helps you trim your prompt before you send it.",
   "permissions": ["storage"],
   "host_permissions": [

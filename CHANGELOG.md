@@ -2,6 +2,12 @@
 
 All notable changes to Token Meter are documented here. Versions correspond to `manifest.json`'s `version` field.
 
+## 0.5.0
+
+### Changed
+- Removed the "messages left" countdown for Claude specifically (ChatGPT and Gemini unaffected). The countdown estimates against the *context window*, which is a different ceiling from Claude's actual *usage quota* (Anthropic's rolling message limit, tied to plan and model). Showing both side-by-side — especially alongside a dedicated tool that reads Anthropic's real session/quota data — produced two numbers that looked like they answered the same question but didn't; ours was consistently a much larger, less useful number, since the 200K-token context window is rarely the actual binding constraint compared to the quota. Controlled per-site via `SHOW_MESSAGES_LEFT_BY_SITE` in `content/main.js`. The "Used so far" and "Tokens left" rows still show for Claude — only the messages-left countdown specifically is hidden.
+- `badge.js`'s `update()` now distinguishes three distinct states for the messages-left field instead of two: a real number, `null` (not enough history yet — may resolve as the conversation continues), and the new literal `"disabled"` (intentionally not shown for this site). Previously `null` and `undefined` were treated identically, which would have made a permanently-disabled state read as "may show up later," which isn't true.
+
 ## 0.4.0
 
 ### Fixed

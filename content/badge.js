@@ -72,9 +72,14 @@ window.TokenMeter.badge = (function () {
    * @param {number} state.count - DRAFT token count (current composer text only)
    * @param {boolean} state.approx - whether the count is an estimate (adds "≈")
    * @param {number|null} state.limit - context limit to gauge against, or null if unknown
-   * @param {number|null} [state.messagesLeft] - estimated remaining user/assistant
-   *   pairs that could fit before the limit, or null if not enough history yet
-   *   to compute a running average.
+   * @param {number|null|"disabled"} [state.messagesLeft] - estimated remaining
+   *   user/assistant pairs that could fit before the limit; null if not enough
+   *   history yet to compute a running average (may resolve as the
+   *   conversation continues); the literal string "disabled" if this site
+   *   intentionally doesn't show the countdown at all (see SHOW_MESSAGES_LEFT_BY_SITE
+   *   in content/main.js — currently used for Claude, since our context-window
+   *   based estimate isn't the number people actually want there; a real
+   *   usage-quota tool answers that better).
    * @param {number} [state.usedTokens] - TOTAL tokens used so far (history + draft),
    *   i.e. what scrapeHistory + the draft currently add up to.
    * @param {number} [state.remainingTokens] - limit - usedTokens, floored at 0.
@@ -106,10 +111,17 @@ window.TokenMeter.badge = (function () {
       panelRemainingEl.textContent = "—";
     }
 
-    if (messagesLeft === null || messagesLeft === undefined) {
+    const messagesLeftRow = panelMessagesLeftEl.closest(".tm-panel-row");
+
+    if (messagesLeft === "disabled") {
+      messagesLeftEl.textContent = "";
+      if (messagesLeftRow) messagesLeftRow.style.display = "none";
+    } else if (messagesLeft === null || messagesLeft === undefined) {
+      if (messagesLeftRow) messagesLeftRow.style.display = "";
       messagesLeftEl.textContent = "";
       panelMessagesLeftEl.textContent = "Not enough history yet";
     } else {
+      if (messagesLeftRow) messagesLeftRow.style.display = "";
       messagesLeftEl.textContent = `~${messagesLeft} msg left`;
       panelMessagesLeftEl.textContent = String(messagesLeft);
     }
