@@ -226,3 +226,10 @@ done about it:
 - The AI rewrite feature sends your prompt text to Anthropic's API using your
   own key — review `background/background.js` if you want to audit exactly
   what's sent.
+
+
+Working:
+
+
+https://github.com/user-attachments/assets/59d44ac3-387d-40a9-90c8-16385744501d
+
